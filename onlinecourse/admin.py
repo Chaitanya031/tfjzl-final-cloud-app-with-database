@@ -39,6 +39,10 @@ class LessonAdmin(admin.ModelAdmin):
     search_fields = ('title',)
     inlines = [QuestionInline]
 
+class LessonInline(admin.StackedInline):
+    model = Lesson
+    extra = 5
+    
 class CourseAdmin(admin.ModelAdmin):
     list_display = ('name', 'pub_date', 'total_enrollment')
     list_filter = ('pub_date',)
