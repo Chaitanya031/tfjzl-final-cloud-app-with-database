@@ -39,6 +39,12 @@ class LessonAdmin(admin.ModelAdmin):
     search_fields = ('title',)
     inlines = [QuestionInline]
 
+class CourseAdmin(admin.ModelAdmin):
+    list_display = ('name', 'pub_date', 'total_enrollment')
+    list_filter = ('pub_date',)
+    search_fields = ('name',)
+    inlines = [LessonInline]
+
 
 admin.site.register(Course, CourseAdmin)
 admin.site.register(Lesson, LessonAdmin)
