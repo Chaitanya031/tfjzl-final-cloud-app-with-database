@@ -1,3 +1,4 @@
+```python
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect
@@ -16,13 +17,10 @@ from .models import (
 
 def index(request):
     course_list = Course.objects.all()
-    context = {
-        'course_list': course_list
-    }
     return render(
         request,
         'onlinecourse/course_list_bootstrap.html',
-        context
+        {'course_list': course_list}
     )
 
 
@@ -65,10 +63,7 @@ def enroll(request, course_id):
     )
 
     return HttpResponseRedirect(
-        reverse(
-            'onlinecourse:course_details',
-            args=(course.id,)
-        )
+        reverse('onlinecourse:course_details', args=(course.id,))
     )
 
 
@@ -76,13 +71,8 @@ def enroll(request, course_id):
 def course_details(request, course_id):
     course = get_object_or_404(Course, pk=course_id)
 
-    lesson_list = Lesson.objects.filter(
-        course=course
-    ).order_by('order')
-
-    question_list = Question.objects.filter(
-        course=course
-    )
+    lesson_list = Lesson.objects.filter(course=course).order_by('order')
+    question_list = Question.objects.filter(course=course)
 
     enrollment = Enrollment.objects.filter(
         user=request.user,
@@ -107,16 +97,10 @@ def course_details(request, course_id):
 def submit(request, course_id):
     if request.method != 'POST':
         return HttpResponseRedirect(
-            reverse(
-                'onlinecourse:course_details',
-                args=(course_id,)
-            )
+            reverse('onlinecourse:course_details', args=(course_id,))
         )
 
-    course = get_object_or_404(
-        Course,
-        pk=course_id
-    )
+    course = get_object_or_404(Course, pk=course_id)
 
     enrollment = get_object_or_404(
         Enrollment,
@@ -124,18 +108,12 @@ def submit(request, course_id):
         course=course
     )
 
-    submission = Submission.objects.create(
-        enrollment=enrollment
-    )
+    submission = Submission.objects.create(enrollment=enrollment)
 
-    questions = Question.objects.filter(
-        course=course
-    )
+    questions = Question.objects.filter(course=course)
 
     for question in questions:
-        choice_id = request.POST.get(
-            'choice_' + str(question.id)
-        )
+        choice_id = request.POST.get('choice_' + str(question.id))
 
         if choice_id:
             choice = Choice.objects.filter(
@@ -159,10 +137,7 @@ def submit(request, course_id):
 
 @login_required
 def show_exam_result(request, course_id, submission_id):
-    course = get_object_or_404(
-        Course,
-        pk=course_id
-    )
+    course = get_object_or_404(Course, pk=course_id)
 
     submission = get_object_or_404(
         Submission,
@@ -171,11 +146,13 @@ def show_exam_result(request, course_id, submission_id):
         enrollment__course=course
     )
 
-    question_list = Question.objects.filter(
-        course=course
-    )
-
+    question_list = Question.objects.filter(course=course)
     selected_choices = submission.choices.all()
+
+    # Required selected_ids context variable
+    selected_ids = list(
+        selected_choices.values_list('id', flat=True)
+    )
 
     total_score = 0
     possible_score = 0
@@ -183,11 +160,11 @@ def show_exam_result(request, course_id, submission_id):
     for question in question_list:
         possible_score += question.grade
 
-        selected_choice_ids = selected_choices.filter(
+        question_selected_ids = selected_choices.filter(
             question=question
         ).values_list('id', flat=True)
 
-        if question.is_get_score(selected_choice_ids):
+        if question.is_get_score(question_selected_ids):
             total_score += question.grade
 
     context = {
@@ -195,6 +172,7 @@ def show_exam_result(request, course_id, submission_id):
         'submission': submission,
         'question_list': question_list,
         'choices': selected_choices,
+        'selected_ids': selected_ids,
         'total_score': total_score,
         'possible_score': possible_score,
         'grade': total_score,
@@ -206,3 +184,4 @@ def show_exam_result(request, course_id, submission_id):
         'onlinecourse/exam_result_bootstrap.html',
         context
     )
+```
