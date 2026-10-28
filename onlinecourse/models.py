@@ -146,7 +146,7 @@ class Choice(models.Model):
         Question,
         on_delete=models.CASCADE
     )
-    choice_text = models.CharField(max_length=200)
+    choice_text = models.CharField(max_length=100)
     is_correct = models.BooleanField(default=False)
 
     def __str__(self):
