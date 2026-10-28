@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # OnlineCourse — Add a New Assessment Feature (Final Project)
 
 A Django web application for an online course platform with a new **assessment / mock exam**
@@ -74,3 +75,8 @@ Admin site: http://127.0.0.1:8000/admin/
 # Django-application-development
 xyz
 >>>>>>> 75791dca8371c14327985056db8f2c45c855110d
+=======
+# Online Course
+
+This is my Django project.
+>>>>>>> 4305d5027d10f48f4eb164182b72107e59eb3a5f
