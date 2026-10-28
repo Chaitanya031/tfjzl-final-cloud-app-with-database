@@ -1,2 +1,3 @@
-# Django-application-development
-xyz
+# Online Course
+
+This is my Django project.
