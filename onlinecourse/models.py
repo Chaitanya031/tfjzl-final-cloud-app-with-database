@@ -162,5 +162,5 @@ class Submission(models.Model):
     submit_time = models.DateTimeField(default=now)
 
     def __str__(self):
-        return "Submission: " + str(self.pk)
+    return f"Submission {self.id} for enrollment {self.enrollment.id}"
 
