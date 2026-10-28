@@ -1,128 +1,107 @@
+```html
 {% extends "onlinecourse/base.html" %}
 
 {% block content %}
-
 <div class="container mt-4">
 
-    <!-- Course Details -->
-    <div class="row mb-4">
+    <div class="row">
         <div class="col-md-12">
-            <div class="card">
+            <div class="card mb-4">
                 <div class="card-header bg-primary text-white">
-                    <h2 class="mb-0">{{ course.name }}</h2>
+                    <h2>{{ course.name }}</h2>
                 </div>
                 <div class="card-body">
-                    <h5 class="card-title">Course Description</h5>
-                    <p class="card-text">{{ course.description }}</p>
+                    <p class="lead">{{ course.description }}</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Course Lessons -->
-    <div class="row mb-4">
+    <div class="row">
         <div class="col-md-12">
-            <h3 class="mb-3">Course Lessons</h3>
+            <h3 class="mb-3">Lessons</h3>
 
             {% for lesson in lesson_list %}
-                <div class="card mb-3">
-                    <div class="card-header bg-light">
-                        <h5 class="mb-0">
-                            Lesson {{ forloop.counter }}: {{ lesson.title }}
-                        </h5>
-                    </div>
-
-                    <div class="card-body">
-                        <p class="card-text">{{ lesson.content }}</p>
-                    </div>
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>
+                        Lesson {{ forloop.counter }}: {{ lesson.title }}
+                    </h5>
                 </div>
+                <div class="card-body">
+                    <p>{{ lesson.content }}</p>
+                </div>
+            </div>
             {% empty %}
-                <div class="alert alert-warning" role="alert">
-                    No lessons are available for this course.
-                </div>
+            <div class="alert alert-warning">
+                No lessons are available for this course.
+            </div>
             {% endfor %}
-
         </div>
     </div>
 
-    <!-- Mock Exam / Assessment -->
-    <div class="row mb-4">
+    <div class="row">
         <div class="col-md-12">
             <h3 class="mb-3">Mock Exam / Assessment</h3>
 
             {% if enrollment %}
+            <form id="exam_form"
+                  action="{% url 'onlinecourse:submit' course.id %}"
+                  method="post">
 
-                <form id="exam_form"
-                      action="{% url 'onlinecourse:submit' course.id %}"
-                      method="post">
+                {% csrf_token %}
 
-                    {% csrf_token %}
+                {% for question in question_list %}
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <strong>Question {{ forloop.counter }}:</strong>
+                        {{ question.question_text }}
+                    </div>
 
-                    {% for question in question_list %}
-                        <div class="card mb-3">
+                    <div class="card-body">
+                        {% for choice in question.get_choices %}
+                        <div class="form-check">
+                            <input
+                                class="form-check-input"
+                                type="radio"
+                                name="choice_{{ question.id }}"
+                                id="choice{{ choice.id }}"
+                                value="{{ choice.id }}">
 
-                            <div class="card-header bg-light">
-                                <strong>
-                                    Question {{ forloop.counter }}:
-                                </strong>
-                                {{ question.question_text }}
-                            </div>
-
-                            <div class="card-body">
-                                {% for choice in question.get_choices %}
-                                    <div class="form-check mb-2">
-
-                                        <input
-                                            class="form-check-input"
-                                            type="radio"
-                                            name="choice_{{ question.id }}"
-                                            id="choice{{ choice.id }}"
-                                            value="{{ choice.id }}"
-                                        >
-
-                                        <label
-                                            class="form-check-label"
-                                            for="choice{{ choice.id }}"
-                                        >
-                                            {{ choice.choice_text }}
-                                        </label>
-
-                                    </div>
-                                {% endfor %}
-                            </div>
-
+                            <label
+                                class="form-check-label"
+                                for="choice{{ choice.id }}">
+                                {{ choice.choice_text }}
+                            </label>
                         </div>
-                    {% empty %}
-                        <div class="alert alert-info" role="alert">
-                            No assessment questions are available for this course.
-                        </div>
-                    {% endfor %}
+                        {% endfor %}
+                    </div>
+                </div>
+                {% empty %}
+                <div class="alert alert-info">
+                    No assessment questions are available.
+                </div>
+                {% endfor %}
 
-                    {% if question_list %}
-                        <button type="submit" class="btn btn-success">
-                            Submit Exam
-                        </button>
-                    {% endif %}
-
-                </form>
+                {% if question_list %}
+                <button type="submit" class="btn btn-success">
+                    Submit Exam
+                </button>
+                {% endif %}
+            </form>
 
             {% else %}
-
-                <div class="alert alert-info" role="alert">
-                    Please
-                    <a href="{% url 'onlinecourse:enroll' course.id %}"
-                       class="alert-link">
-                        enroll
-                    </a>
-                    in this course to take the assessment.
-                </div>
-
+            <div class="alert alert-info">
+                Please
+                <a href="{% url 'onlinecourse:enroll' course.id %}">
+                    enroll
+                </a>
+                in this course to take the assessment.
+            </div>
             {% endif %}
-
         </div>
     </div>
 
 </div>
-
 {% endblock %}
-
+```
