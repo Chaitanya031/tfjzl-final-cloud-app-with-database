@@ -159,8 +159,7 @@ class Submission(models.Model):
         on_delete=models.CASCADE
     )
     choices = models.ManyToManyField(Choice)
-    submit_time = models.DateTimeField(default=now)
+    submit_time = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
-    return f"Submission {self.id} for enrollment {self.enrollment.id}"
-
+        return f"Submission {self.id} for enrollment {self.enrollment.id}"
